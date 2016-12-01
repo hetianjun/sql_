@@ -38,6 +38,9 @@ EXECUTE stmt2;
 
 select * from table_name where col1='A2';
 
+
+
+
 select * from(
 select t.col1,
 	max(case when col2='B1' then col3 else '' end) as c2,
@@ -47,3 +50,43 @@ select t.col1,
  #,t.*
  from table_name t GROUP BY col1 ) tmp 
  ;
+
+
+
+select t.col1,
+	max(if (col2='B1' , col3 , '') ) as c2,
+	max(if (col2='B2' , col3 , '') ) as c3,
+	max(if (col2='B3' , col3 , '') ) as c4,
+	max(if (col2='B4' , col3 , '') ) as c5
+ #,t.*
+ from table_name t GROUP BY col1 ;
+
+
+
+
+### 动态字段列
+SELECT
+ GROUP_CONCAT(DISTINCT
+  CONCAT(
+   'MAX(IF(c.col2 = ''',
+   c.col2,
+   ''', c.col3, 0)) AS ''',
+   c.col2, ''''
+  )
+ )
+FROM table_name c;
+
+
+
+select c.col1,
+	# 来自上一个语句
+	MAX(IF(c.col2 = 'B1', c.col3, 0)) AS 'B1',MAX(IF(c.col2 = 'B2', c.col3, 0)) AS 'B2',MAX(IF(c.col2 = 'B3', c.col3, 0)) AS 'B3',MAX(IF(c.col2 = 'B4', c.col3, 0)) AS 'B4'
+ from table_name c GROUP BY col1 ;
+
+
+
+
+
+
+
+
